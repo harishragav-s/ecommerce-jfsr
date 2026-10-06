@@ -1,32 +1,33 @@
-# MERN E-Commerce Website
+# StyleKart - E-Commerce Website
 
-## Overview :
+## Overview
 
-A full-stack e-commerce website using the MERN stack (MongoDB, Express.js, React, Node.js). Features include product browsing, user authentication and shopping cart.
+StyleKart is a full-stack e-commerce web application developed using Java Spring Boot and React.js. The application provides a complete online shopping experience with user authentication, product browsing, shopping cart, order management, product reviews, address management, and online payments. The backend is designed using a microservices architecture to provide better separation of responsibilities and scalability.
 
 ## Features
 
-- Product Listings
-- User Authentication
-- Shopping Cart
-- Order Management
+StyleKart supports secure user registration and login with JWT-based authentication and role-based authorization. Users can browse products, manage their shopping cart, place orders, manage delivery addresses, review products, and make payments through PayPal. Administrators can manage products and orders through dedicated management functionality. The application also uses service discovery, API gateway routing, inter-service communication, and fault-tolerance mechanisms across its backend services.
 
 ## Technologies
 
-- **Frontend:** React.js (Vite), Redux ,Tailwind CSS
-- **Backend:** Node.js, Express.js, MongoDB
-- **Tools:** Axios, JWT, Bcrypt
+The frontend is developed using React.js with Vite, Redux Toolkit, React Router, Axios, and Tailwind CSS. The backend is built using Java 21, Spring Boot, Spring Security, Spring Data MongoDB, JWT, and REST APIs. The microservices architecture uses Spring Cloud Gateway, Eureka Service Discovery, OpenFeign, and Resilience4j. MongoDB is used as the primary database, while Swagger/OpenAPI is used for API documentation and testing.
 
-## Project Screenshots
+## Project Structure
 
-### Here are some screenshots of the project:
-![SS 1](screenshots/image1.png)
-![SS 2](screenshots/image2.png)
-![SS 3](screenshots/image3.png)
-![SS 4](screenshots/image4.png)
-![SS 5](screenshots/image5.png)
-![SS 6](screenshots/image6.png)
-![SS 7](screenshots/image7.png)
-
-
-
+```text
+StyleKart/
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── vite.config.js
+│
+├── backend/
+│   ├── api-gateway/
+│   ├── eureka-server/
+│   ├── auth-service/
+│   ├── product-service/
+│   ├── cart-service/
+│   └── order-service/
+│
+└── README.md
