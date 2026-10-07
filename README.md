@@ -2,7 +2,7 @@
 
 ## Overview
 
-StyleKart is a Java Full Stack e-commerce application built using modern frontend and backend technologies. It provides a complete online shopping experience with user authentication, product browsing and management, shopping cart, order management, product reviews, address management, and online payment integration.
+StyleKart is a Java Full Stack e-commerce application built using React.js for the frontend and Java Spring Boot for the backend. It provides a complete e-commerce experience with user authentication, product management, shopping cart, orders, reviews, address management, and online payments.
 
 ## Technologies Used
 
@@ -12,7 +12,11 @@ React.js, Vite, Redux Toolkit, React Router, Axios, Tailwind CSS
 
 ### Backend
 
-Java 21, Spring Boot, Spring Security, Spring Data MongoDB, JWT Authentication, REST APIs, Spring Cloud Gateway, Eureka Server, OpenFeign, Resilience4j
+Java 21, Spring Boot, Spring Security, Spring Data MongoDB, JWT Authentication, REST APIs
+
+### Microservices
+
+Spring Cloud Gateway, Eureka Server, OpenFeign, Resilience4j
 
 ### Database & Tools
 
@@ -37,6 +41,7 @@ MongoDB, Maven, Swagger/OpenAPI, Git, GitHub, PayPal
 
 ## Project Structure
 
+```text
 StyleKart/
 │
 ├── frontend/
@@ -54,21 +59,29 @@ StyleKart/
 │   └── order-service/
 │
 └── README.md
+```
 
 ## How to Run
 
 ### Prerequisites
 
-Java 21, Node.js, Maven, and MongoDB must be installed.
+Make sure the following are installed:
+
+- Java 21
+- Node.js
+- Maven
+- MongoDB
 
 ### Clone the Repository
 
+```bash
 git clone https://github.com/harishragav-s/ecommerce-jfsr.git
 cd ecommerce-jfsr
+```
 
 ### Run the Backend
 
-Start the backend services in the following order:
+Start the services in the following order:
 
 1. Eureka Server
 2. Auth Service
@@ -79,9 +92,11 @@ Start the backend services in the following order:
 
 ### Run the Frontend
 
+```bash
 cd frontend
 npm install
 npm run dev
+```
 
 The application will start using the Vite development server.
 
@@ -89,5 +104,6 @@ The application will start using the Vite development server.
 
 Swagger/OpenAPI is integrated into the backend services for exploring and testing the available REST APIs.
 
-Swagger UI:
+```text
 http://localhost:<port>/swagger-ui/index.html
+```
