@@ -1,115 +1,89 @@
-/* 
-   Main Application Routing File (App.jsx)
-  --------------------------------------------------------
-  This file sets up all the frontend routes using React Router.
-  It controls which page should show based on the URL path.
-  */
+import { useEffect } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
-// React Router imports for defining app routes
-import { Route, Routes } from "react-router-dom";
-
-// Layouts for authentication and shopping sections
 import AuthLayout from "./components/auth/layout";
-import ShoppingLayout from "./components/shopping-view/layout";
+import ShoppingLayout from "./components/shop/layout";
+import AdminLayout from "./components/admin/layout";
+import CheckAuth from "./components/common/check-auth";
 
-// Auth-related pages
 import AuthLogin from "./pages/auth/login";
 import AuthRegister from "./pages/auth/register";
 
-// Shopping-related pages
-import ShoppingHome from "./pages/shopping-view/home";
-import ShoppingListing from "./pages/shopping-view/listing";
-import ShoppingCheckout from "./pages/shopping-view/checkout";
-import ShoppingAccount from "./pages/shopping-view/account";
-import PaypalReturnPage from "./pages/shopping-view/paypal-return";
-import PaymentSuccessPage from "./pages/shopping-view/payment-success";
-import SearchProducts from "./pages/shopping-view/search";
+import ShoppingHome from "./pages/shop/home";
+import ShoppingListing from "./pages/shop/listing";
+import ProductPage from "./pages/shop/product";
+import ShoppingCheckout from "./pages/shop/checkout";
+import ShoppingAccount from "./pages/shop/account";
+import ShoppingWishlist from "./pages/shop/wishlist";
+import SearchProducts from "./pages/shop/search";
+import HelpPage from "./pages/shop/help";
+import PaypalReturnPage from "./pages/shop/paypal-return";
+import PaymentSuccessPage from "./pages/shop/payment-success";
 
-// Common pages
-import NotFound from "./pages/not-found"; // 404 page
-import UnauthPage from "./pages/unauth-page"; // shown to unauthorized users
+import AdminDashboard from "./pages/admin/dashboard";
+import AdminProducts from "./pages/admin/products";
+import AdminOrders from "./pages/admin/orders";
+import AdminUsers from "./pages/admin/users";
 
-// Authentication check component (to protect private routes)
-import CheckAuth from "./components/common/check-auth";
-
-// Redux imports for state management
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-
-// Auth action to verify if the user is already logged in
-import { checkAuth } from "./store/auth-slice";
-
-// Loading skeleton UI while checking auth
-import { Skeleton } from "@/components/ui/skeleton";
+import NotFound from "./pages/not-found";
+import UnauthPage from "./pages/unauth-page";
+import { checkAuth } from "@/store/slices/authSlice";
 
 function App() {
-  // Accessing auth state from Redux store
-  const { user, isAuthenticated, isLoading } = useSelector(
-    (state) => state.auth
-  );
-
+  const { user, isAuthenticated, isLoading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
-  // On app mount, check if the user is logged in using token/session
   useEffect(() => {
     dispatch(checkAuth());
   }, [dispatch]);
 
-  // If the app is checking for auth, show a loading skeleton
-  if (isLoading) return <Skeleton className="w-[800] bg-black h-[600px]" />;
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4">
+        <p className="text-3xl font-black">STYLE<span className="text-red-500">KART</span></p>
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-gray-900" />
+      </div>
+    );
+  }
 
-  // Render the full app with routes after auth check is done
+  const guard = (el) => <CheckAuth isAuthenticated={isAuthenticated} user={user}>{el}</CheckAuth>;
+
   return (
-    <div className="flex flex-col overflow-hidden bg-white">
-      <Routes>
+    <Routes>
+      <Route path="/" element={guard(null)} />
 
-        {/* Default Route - Landing or Redirect Route */}
-        <Route
-          path="/"
-          element={
-            <CheckAuth isAuthenticated={isAuthenticated} user={user}></CheckAuth>
-          }
-        />
+      <Route path="/auth" element={guard(<AuthLayout />)}>
+        <Route index element={<Navigate to="login" replace />} />
+        <Route path="login" element={<AuthLogin />} />
+        <Route path="register" element={<AuthRegister />} />
+      </Route>
 
-        {/* Auth Routes - Login and Register */}
-        <Route
-          path="/auth"
-          element={
-            <CheckAuth isAuthenticated={isAuthenticated} user={user}>
-              <AuthLayout />
-            </CheckAuth>
-          }
-        >
-          <Route path="login" element={<AuthLogin />} />
-          <Route path="register" element={<AuthRegister />} />
-        </Route>
+      <Route path="/shop" element={guard(<ShoppingLayout />)}>
+        <Route index element={<Navigate to="home" replace />} />
+        <Route path="home" element={<ShoppingHome />} />
+        <Route path="listing" element={<ShoppingListing />} />
+        <Route path="product/:id" element={<ProductPage />} />
+        <Route path="search" element={<SearchProducts />} />
+        <Route path="wishlist" element={<ShoppingWishlist />} />
+        <Route path="checkout" element={<ShoppingCheckout />} />
+        <Route path="account" element={<ShoppingAccount />} />
+        <Route path="help" element={<HelpPage />} />
+        <Route path="paypal-return" element={<PaypalReturnPage />} />
+        <Route path="payment-success" element={<PaymentSuccessPage />} />
+      </Route>
 
-        {/* Shop Routes - All shopping features for logged-in users */}
-        <Route
-          path="/shop"
-          element={
-            <CheckAuth isAuthenticated={isAuthenticated} user={user}>
-              <ShoppingLayout />
-            </CheckAuth>
-          }
-        >
-          <Route path="home" element={<ShoppingHome />} />
-          <Route path="listing" element={<ShoppingListing />} />
-          <Route path="checkout" element={<ShoppingCheckout />} />
-          <Route path="account" element={<ShoppingAccount />} />
-          <Route path="paypal-return" element={<PaypalReturnPage />} />
-          <Route path="payment-success" element={<PaymentSuccessPage />} />
-          <Route path="search" element={<SearchProducts />} />
-        </Route>
+      <Route path="/admin" element={guard(<AdminLayout />)}>
+        <Route index element={<Navigate to="dashboard" replace />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="products" element={<AdminProducts />} />
+        <Route path="orders" element={<AdminOrders />} />
+        <Route path="users" element={<AdminUsers />} />
+      </Route>
 
-        {/* If user is unauthorized to access a private route */}
-        <Route path="/unauth-page" element={<UnauthPage />} />
-
-        {/* Catch-All Route - 404 Page */}
-        <Route path="*" element={<NotFound />} />
-
-      </Routes>
-    </div>
+      <Route path="/unauth-page" element={<UnauthPage />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
 

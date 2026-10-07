@@ -1,66 +1,61 @@
-import CommonForm from "@/components/common/form";
-import { useToast } from "@/components/ui/use-toast";
-import { registerFormControls } from "@/config";
-import { registerUser } from "@/store/auth-slice";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-
-const initialState = {
-  userName: "",
-  email: "",
-  password: "",
-};
+import { useDispatch } from "react-redux";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import Field from "@/components/auth/field";
+import { registerUser } from "@/store/slices/authSlice";
 
 function AuthRegister() {
-  const [formData, setFormData] = useState(initialState);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [form, setForm] = useState({ userName: "", email: "", password: "", confirm: "" });
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
-  function onSubmit(event) {
-    event.preventDefault();
-    dispatch(registerUser(formData)).then((data) => {
-      if (data?.payload?.success) {
-        toast({
-          title: data?.payload?.message,
-        });
-        navigate("/auth/login");
-      } else {
-        toast({
-          title: data?.payload?.message,
-          variant: "destructive",
-        });
-      }
-    });
+  function validate() {
+    const e = {};
+    if (form.userName.trim().length < 3) e.userName = "At least 3 characters";
+    if (!/^\S+@\S+\.\S+$/.test(form.email)) e.email = "Enter a valid email address";
+    if (form.password.length < 6) e.password = "At least 6 characters";
+    if (form.confirm !== form.password) e.confirm = "Passwords don't match";
+    setErrors(e);
+    return Object.keys(e).length === 0;
   }
 
-  console.log(formData);
+  async function onSubmit(event) {
+    event.preventDefault();
+    if (!validate()) return;
+    setLoading(true);
+    const { confirm, ...payload } = form; // eslint-disable-line no-unused-vars
+    const res = await dispatch(registerUser(payload));
+    setLoading(false);
+    if (res?.payload?.success) {
+      toast({ title: "Account created! Please log in." });
+      navigate("/auth/login");
+    } else {
+      toast({ title: res?.payload?.message || "Registration failed.", variant: "destructive" });
+    }
+  }
+
+  const set = (k) => (v) => setForm({ ...form, [k]: v });
 
   return (
-    <div className="mx-auto w-full max-w-md space-y-6">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Create new account
-        </h1>
-        <p className="mt-2">
-          Already have an account
-          <Link
-            className="font-medium ml-2 text-primary hover:underline"
-            to="/auth/login"
-          >
-            Login
-          </Link>
-        </p>
+    <form onSubmit={onSubmit} className="space-y-4" noValidate>
+      <div>
+        <h1 className="text-2xl font-bold">Create your account</h1>
+        <p className="mt-1 text-sm text-gray-500">It takes less than a minute.</p>
       </div>
-      <CommonForm
-        formControls={registerFormControls}
-        buttonText={"Sign Up"}
-        formData={formData}
-        setFormData={setFormData}
-        onSubmit={onSubmit}
-      />
-    </div>
+      <Field label="Username" autoComplete="username" value={form.userName} error={errors.userName} onChange={set("userName")} />
+      <Field label="Email" type="email" autoComplete="email" value={form.email} error={errors.email} onChange={set("email")} />
+      <Field label="Password" type="password" autoComplete="new-password" value={form.password} error={errors.password} onChange={set("password")} />
+      <Field label="Confirm password" type="password" autoComplete="new-password" value={form.confirm} error={errors.confirm} onChange={set("confirm")} />
+      <Button type="submit" className="h-11 w-full" disabled={loading}>{loading ? "Creating account..." : "Create account"}</Button>
+      <p className="text-center text-sm text-gray-600">
+        Already have an account? <Link to="/auth/login" className="font-semibold text-gray-900 underline-offset-4 hover:underline">Log in</Link>
+      </p>
+    </form>
   );
 }
 

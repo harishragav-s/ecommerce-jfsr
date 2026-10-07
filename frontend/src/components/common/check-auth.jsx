@@ -2,33 +2,16 @@ import { Navigate, useLocation } from "react-router-dom";
 
 function CheckAuth({ isAuthenticated, user, children }) {
   const location = useLocation();
+  const path = location.pathname;
+  const isAdmin = user?.role === "ADMIN";
+  const home = isAdmin ? "/admin/dashboard" : "/shop/home";
+  const onAuthPage = path.includes("/login") || path.includes("/register");
 
-  // Redirect unauthenticated users accessing root to login
-  if (location.pathname === "/") {
-    return isAuthenticated ? <Navigate to="/shop/home" /> : <Navigate to="/auth/login" />;
-  }
+  if (path === "/") return <Navigate to={isAuthenticated ? home : "/auth/login"} replace />;
+  if (!isAuthenticated && !onAuthPage) return <Navigate to="/auth/login" replace />;
+  if (isAuthenticated && onAuthPage) return <Navigate to={home} replace />;
+  if (isAuthenticated && !isAdmin && path.startsWith("/admin")) return <Navigate to="/unauth-page" replace />;
 
-  // Redirect unauthenticated users trying to access protected routes
-  if (
-    !isAuthenticated &&
-    !(
-      location.pathname.includes("/login") ||
-      location.pathname.includes("/register")
-    )
-  ) {
-    return <Navigate to="/auth/login" />;
-  }
-
-  // Redirect authenticated users away from login/register pages
-  if (
-    isAuthenticated &&
-    (location.pathname.includes("/login") ||
-      location.pathname.includes("/register"))
-  ) {
-    return <Navigate to="/shop/home" />;
-  }
-
-  // Allow access to valid routes
   return <>{children}</>;
 }
 

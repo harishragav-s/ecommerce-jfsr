@@ -1,62 +1,55 @@
-import CommonForm from "@/components/common/form";
-import { useToast } from "@/components/ui/use-toast";
-import { loginFormControls } from "@/config";
-import { loginUser } from "@/store/auth-slice";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-
-const initialState = {
-  email: "",
-  password: "",
-};
+import { useDispatch } from "react-redux";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import Field from "@/components/auth/field";
+import { loginUser } from "@/store/slices/authSlice";
 
 function AuthLogin() {
-  const [formData, setFormData] = useState(initialState);
   const dispatch = useDispatch();
   const { toast } = useToast();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
-  function onSubmit(event) {
+  function validate() {
+    const e = {};
+    if (!/^\S+@\S+\.\S+$/.test(form.email)) e.email = "Enter a valid email address";
+    if (!form.password) e.password = "Enter your password";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  }
+
+  async function onSubmit(event) {
     event.preventDefault();
-
-    dispatch(loginUser(formData)).then((data) => {
-      if (data?.payload?.success) {
-        toast({
-          title: data?.payload?.message,
-        });
-      } else {
-        toast({
-          title: data?.payload?.message,
-          variant: "destructive",
-        });
-      }
-    });
+    if (!validate()) return;
+    setLoading(true);
+    const res = await dispatch(loginUser(form));
+    setLoading(false);
+    if (res?.payload?.success) {
+      toast({ title: `Welcome back, ${res.payload.user?.userName}!` });
+    } else {
+      toast({ title: res?.payload?.message || "Login failed. Is the backend running?", variant: "destructive" });
+    }
   }
 
   return (
-    <div className="mx-auto w-full max-w-md space-y-6">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Sign in to your account
-        </h1>
-        <p className="mt-2">
-          Don't have an account
-          <Link
-            className="font-medium ml-2 text-primary hover:underline"
-            to="/auth/register"
-          >
-            Register
-          </Link>
-        </p>
+    <form onSubmit={onSubmit} className="space-y-5" noValidate>
+      <div>
+        <h1 className="text-2xl font-bold">Welcome back</h1>
+        <p className="mt-1 text-sm text-gray-500">Log in to track orders and check out faster.</p>
       </div>
-      <CommonForm
-        formControls={loginFormControls}
-        buttonText={"Sign In"}
-        formData={formData}
-        setFormData={setFormData}
-        onSubmit={onSubmit}
-      />
-    </div>
+      <Field label="Email" type="email" autoComplete="email" value={form.email} error={errors.email} onChange={(v) => setForm({ ...form, email: v })} />
+      <Field label="Password" type="password" autoComplete="current-password" value={form.password} error={errors.password} onChange={(v) => setForm({ ...form, password: v })} />
+      <Button type="submit" className="h-11 w-full" disabled={loading}>{loading ? "Signing in..." : "Log in"}</Button>
+      <p className="text-center text-sm text-gray-600">
+        New here? <Link to="/auth/register" className="font-semibold text-gray-900 underline-offset-4 hover:underline">Create an account</Link>
+      </p>
+      <p className="rounded-md bg-gray-50 px-3 py-2 text-center text-xs text-gray-500">
+        Demo admin: admin@ecommerce.com / Admin@123
+      </p>
+    </form>
   );
 }
 
