@@ -1,21 +1,44 @@
-# StyleKart - E-Commerce Website
+# StyleKart - E-Commerce Application
 
 ## Overview
 
-StyleKart is a full-stack e-commerce web application developed using Java Spring Boot and React.js. The application provides a complete online shopping experience with user authentication, product browsing, shopping cart, order management, product reviews, address management, and online payments. The backend is designed using a microservices architecture to provide better separation of responsibilities and scalability.
+StyleKart is a Java Full Stack e-commerce application built using modern frontend and backend technologies. It provides a complete online shopping experience with user authentication, product browsing and management, shopping cart, order management, product reviews, address management, and online payment integration.
+
+## Technologies Used
+
+### Frontend
+
+React.js, Vite, Redux Toolkit, React Router, Axios, Tailwind CSS
+
+### Backend
+
+Java 21, Spring Boot, Spring Security, Spring Data MongoDB, JWT Authentication, REST APIs, Spring Cloud Gateway, Eureka Server, OpenFeign, Resilience4j
+
+### Database & Tools
+
+MongoDB, Maven, Swagger/OpenAPI, Git, GitHub, PayPal
 
 ## Features
 
-StyleKart supports secure user registration and login with JWT-based authentication and role-based authorization. Users can browse products, manage their shopping cart, place orders, manage delivery addresses, review products, and make payments through PayPal. Administrators can manage products and orders through dedicated management functionality. The application also uses service discovery, API gateway routing, inter-service communication, and fault-tolerance mechanisms across its backend services.
-
-## Technologies
-
-The frontend is developed using React.js with Vite, Redux Toolkit, React Router, Axios, and Tailwind CSS. The backend is built using Java 21, Spring Boot, Spring Security, Spring Data MongoDB, JWT, and REST APIs. The microservices architecture uses Spring Cloud Gateway, Eureka Service Discovery, OpenFeign, and Resilience4j. MongoDB is used as the primary database, while Swagger/OpenAPI is used for API documentation and testing.
+- User registration and login
+- JWT-based authentication and role-based authorization
+- Product browsing and management
+- Product reviews and ratings
+- Shopping cart management
+- Order placement and management
+- Address management
+- PayPal payment integration
+- Admin management
+- Microservices-based backend architecture
+- Service discovery using Eureka
+- API Gateway for request routing
+- Inter-service communication using OpenFeign
+- Fault tolerance using Resilience4j
 
 ## Project Structure
 
-```text
 StyleKart/
+│
 ├── frontend/
 │   ├── src/
 │   ├── public/
@@ -31,3 +54,40 @@ StyleKart/
 │   └── order-service/
 │
 └── README.md
+
+## How to Run
+
+### Prerequisites
+
+Java 21, Node.js, Maven, and MongoDB must be installed.
+
+### Clone the Repository
+
+git clone https://github.com/harishragav-s/ecommerce-jfsr.git
+cd ecommerce-jfsr
+
+### Run the Backend
+
+Start the backend services in the following order:
+
+1. Eureka Server
+2. Auth Service
+3. Product Service
+4. Cart Service
+5. Order Service
+6. API Gateway
+
+### Run the Frontend
+
+cd frontend
+npm install
+npm run dev
+
+The application will start using the Vite development server.
+
+## API Documentation
+
+Swagger/OpenAPI is integrated into the backend services for exploring and testing the available REST APIs.
+
+Swagger UI:
+http://localhost:<port>/swagger-ui/index.html
